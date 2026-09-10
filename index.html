@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%AA%A9%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<meta charset="utf-8">
+<title>Mirrorball Survivor</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,800;1,6..96,400&family=Jost:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* One visual world: a ballroom under stage lights. Every color is painted explicitly. */
+:root{
+  --ground:#14081A; --surface:#221030; --surface-2:#2E1740; --surface-3:#3A2050;
+  --line:rgba(255,235,250,.09); --line-strong:rgba(255,235,250,.2);
+  --ink:#FBF5FF; --ink-2:#CDB9DA; --ink-3:#8E7A9C;
+  --gold:#F2C14E; --gold-ink:#FFD97A; --gold-deep:#9C7414; --gold-soft:rgba(242,193,78,.14);
+  --pink:#FF4FA3; --pink-soft:rgba(255,79,163,.16);
+  --good:#5EE1A0; --good-soft:rgba(94,225,160,.14); --warn:#FFC85C; --warn-soft:rgba(255,200,92,.14); --bad:#FF6B8A; --bad-soft:rgba(255,107,138,.16);
+  --shadow:0 1px 0 rgba(255,255,255,.04) inset,0 18px 44px -20px rgba(0,0,0,.9);
+  --r:14px;
+}
+*{box-sizing:border-box}
+html{background:var(--ground);scroll-behavior:smooth}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:"Jost",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15.5px;line-height:1.5;-webkit-font-smoothing:antialiased}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+a{color:var(--gold-ink)}
+h1,h2,h3{font-family:"Bodoni Moda","Didot","Playfair Display",Georgia,serif;margin:0;line-height:1.05;text-wrap:balance}
+h2{font-size:34px;font-weight:600;letter-spacing:.01em}
+h3{font-size:20px;font-weight:600}
+.mono{font-family:"DM Mono",ui-monospace,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
+.eyebrow{font-size:11.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+section{margin:56px 0}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.sec-head p{margin:0;color:var(--ink-2);max-width:66ch}
+.sec-head h2::after{content:"";display:block;width:56px;height:2px;background:linear-gradient(90deg,var(--gold),transparent);margin-top:10px}
+
+/* ---------- Hero ---------- */
+.hero-wrap{position:relative;overflow:hidden;background:
+  radial-gradient(900px 420px at 18% 0%,rgba(242,193,78,.16),transparent 60%),
+  radial-gradient(700px 380px at 90% 10%,rgba(255,79,163,.14),transparent 60%),
+  var(--ground)}
+.spot{position:absolute;inset:0;pointer-events:none;background:
+  conic-gradient(from 200deg at 22% -10%,transparent 0 12deg,rgba(255,240,200,.05) 12deg 16deg,transparent 16deg),
+  conic-gradient(from 150deg at 80% -10%,transparent 0 10deg,rgba(255,200,240,.05) 10deg 14deg,transparent 14deg)}
+.hero{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:28px;align-items:center;padding:44px 20px 26px}
+@media (max-width:820px){.hero{grid-template-columns:1fr;text-align:center;justify-items:center}}
+canvas#ball{width:210px;height:210px;filter:drop-shadow(0 16px 40px rgba(242,193,78,.42))}
+canvas#glints{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.9}
+.brand h1{font-size:clamp(46px,7vw,86px);font-weight:800;letter-spacing:-.01em;line-height:.95}
+.brand h1 em{font-style:italic;font-weight:400;color:var(--gold-ink)}
+.brand .tag{margin:12px 0 0;color:var(--ink-2);font-size:17px;max-width:54ch}
+.stamp{margin-top:10px;font-family:"DM Mono",monospace;font-size:12px;color:var(--ink-3)}
+.stamp b{color:var(--ink-2);font-weight:500}
+.lockcard{min-width:250px;padding:16px 20px;border:1px solid var(--line-strong);border-radius:var(--r);background:rgba(20,8,26,.6);backdrop-filter:blur(10px);box-shadow:var(--shadow)}
+.lockcard .eyebrow{color:var(--gold-ink)}
+.lockcard .big{font-family:"Bodoni Moda",serif;font-size:30px;font-weight:600;line-height:1.1;margin-top:4px}
+.lockcard .sub{color:var(--ink-2);font-size:13.5px;margin-top:4px}
+.lockcard .cd{margin-top:10px;font-family:"DM Mono",monospace;font-size:15px;color:var(--ink)}
+.lockcard.locked .big{color:var(--warn)}
+.ctas{display:flex;flex-direction:column;gap:12px;align-items:flex-start;margin-top:14px}
+.steps{display:grid;gap:10px;margin-top:2px;width:100%;max-width:540px;text-align:left}
+.step{display:flex;gap:14px;align-items:center;padding:12px 16px;border-radius:14px;border:1px solid var(--line-strong);background:rgba(20,8,26,.55);color:var(--ink);text-decoration:none;box-shadow:var(--shadow)}
+.step:hover{border-color:var(--gold)}
+.step .n{flex:none;width:32px;height:32px;border-radius:50%;background:var(--gold);color:#2A0616;font-family:"Bodoni Moda",serif;font-size:19px;font-weight:800;display:grid;place-items:center}
+.step .t b{display:block;font-weight:600;font-size:16px;line-height:1.2}
+.step .t small{display:block;color:var(--ink-3);font-size:12.5px;margin-top:2px}
+.step-pick{background:var(--pink);border-color:transparent;color:#2A0616;box-shadow:0 12px 28px -12px var(--pink)}
+.step-pick .n{background:#2A0616;color:var(--pink)}
+.step-pick .t small{color:#5a1230}
+.step.off{background:var(--surface-3);border-color:var(--line);color:var(--ink-3);pointer-events:none;box-shadow:none}
+.step.off .n{background:var(--surface-2);color:var(--ink-3)}
+.step.off .t small{color:var(--ink-3)}
+.cta2.solo{margin-top:12px}
+.cta{display:inline-flex;align-items:center;gap:10px;padding:11px 18px;border-radius:999px;background:var(--pink);color:#2A0616;font-weight:600;text-decoration:none;box-shadow:0 10px 26px -10px var(--pink)}
+.cta:hover{filter:brightness(1.06)}
+.cta.off{background:var(--surface-3);color:var(--ink-3);box-shadow:none;pointer-events:none}
+.cta2{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;border:1px solid var(--line-strong);color:var(--ink-2);text-decoration:none;font-size:14px}
+.cta2:hover{border-color:var(--gold);color:var(--gold-ink)}
+
+/* dance-floor facts strip */
+.floor{position:relative;border-top:1px solid var(--gold-deep);border-bottom:1px solid var(--gold-deep);background:
+  linear-gradient(90deg,rgba(242,193,78,.10),rgba(242,193,78,.03) 35%,rgba(255,79,163,.05) 70%,rgba(242,193,78,.10)),var(--surface)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0 18px;padding:16px 20px}
+.facts div{padding:6px 0;border-left:1px solid var(--line);padding-left:16px}
+.facts div:first-child{border-left:0;padding-left:0}
+.facts .n{font-family:"Bodoni Moda",serif;font-size:30px;font-weight:600;line-height:1;margin-top:4px}
+.facts .n small{font-family:"Jost",sans-serif;font-size:13px;color:var(--ink-3);font-weight:400;margin-left:6px}
+
+/* ---------- Standings ---------- */
+.board{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);box-shadow:var(--shadow);overflow:hidden}
+.board .tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:640px}
+th,td{padding:12px 14px;text-align:left;vertical-align:middle;border-bottom:1px solid var(--line)}
+th{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:600;background:var(--surface-2);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+tr.out td{color:var(--ink-3)}
+tr.out .name{text-decoration:line-through;text-decoration-color:rgba(255,107,138,.6)}
+.name{font-weight:600;font-size:16px;white-space:nowrap}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:.04em;white-space:nowrap}
+.pill.alive{background:var(--good-soft);color:var(--good)}
+.pill.out{background:var(--bad-soft);color:var(--bad)}
+.pill i{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:8px;font-size:12.5px;border:1px solid var(--line);background:var(--surface-2);white-space:nowrap}
+.chip .w{font-family:"DM Mono",monospace;font-size:11px;color:var(--ink-3)}
+.chip.Survived,.chip.Refunded,.chip.Wipeout{border-color:rgba(94,225,160,.35)}
+.chip.Eliminated,.chip.Missing,.chip.Late,.chip.Repeat{border-color:rgba(255,107,138,.45);color:var(--bad)}
+.chip.In{border-color:rgba(242,193,78,.5);color:var(--gold-ink)}
+.chip.Locked{border-color:rgba(255,200,92,.5);color:var(--warn)}
+.chip.Open{border-style:dashed;color:var(--ink-3)}
+.chip.Refunded,.chip.Wipeout{color:var(--ink-2);border-style:dashed}
+.empty{padding:34px 20px;text-align:center;color:var(--ink-2)}
+.empty b{display:block;font-family:"Bodoni Moda",serif;font-size:24px;font-weight:600;color:var(--ink);margin-bottom:6px}
+
+/* ---------- Danger board ---------- */
+.danger{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+.drow{display:grid;grid-template-columns:28px 1fr 56px;gap:12px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.drow .rk{font-family:"DM Mono",monospace;font-size:13px;color:var(--ink-3)}
+.drow .who{font-weight:600;line-height:1.2}
+.drow .who small{display:block;font-weight:400;color:var(--ink-3);font-size:12.5px}
+.drow .bar{height:6px;border-radius:3px;background:var(--surface-3);margin-top:7px;overflow:hidden}
+.drow .bar i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,var(--bad),var(--warn) 55%,var(--good))}
+.drow .pct{font-family:"DM Mono",monospace;font-size:16px;text-align:right}
+.drow.safe .pct{color:var(--good)}
+.drow.risk .pct{color:var(--warn)}
+.drow.doom .pct{color:var(--bad)}
+.drow .why{grid-column:2/-1;color:var(--ink-2);font-size:13px;margin-top:2px}
+.note{padding:14px 18px;border:1px dashed var(--line-strong);border-radius:12px;color:var(--ink-2)}
+
+/* ---------- Cast ---------- */
+.cast{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.cp{position:relative;padding:12px 14px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);min-height:96px}
+.cp .st{display:flex;justify-content:flex-end;margin-bottom:6px}
+.cp .celeb{font-family:"Bodoni Moda",serif;font-size:19px;font-weight:600;line-height:1.1}
+.cp .pro{color:var(--ink-2);font-size:13px;margin-top:3px}
+.cp .kf{color:var(--ink-3);font-size:12.5px;margin-top:6px}
+.cp.gone{opacity:.55}
+.cp.gone .celeb{text-decoration:line-through;text-decoration-color:var(--bad)}
+.cp.gone::after{content:"";position:absolute;inset:0;border-radius:12px;background:repeating-linear-gradient(135deg,transparent 0 8px,rgba(255,107,138,.06) 8px 9px);pointer-events:none}
+.pill.dance{background:var(--gold-soft);color:var(--gold-ink)}
+.pill.gone{background:var(--bad-soft);color:var(--bad)}
+.pill.wd{background:var(--surface-3);color:var(--ink-2)}
+
+/* ---------- Season + rules ---------- */
+.season{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.wk{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);font-size:13.5px}
+.wk .eyebrow{font-size:10.5px}
+.wk .d{font-weight:600;margin-top:2px}
+.wk .e{color:var(--ink-3);font-size:12.5px}
+.wk.cur{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
+.wk.done{opacity:.6}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.rule{padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.rule h3{font-size:17px;margin-bottom:6px;color:var(--gold-ink)}
+.rule p{margin:0;color:var(--ink-2);font-size:14.5px}
+footer{margin:60px 0 40px;color:var(--ink-3);font-size:13px;text-align:center}
+footer .mono{color:var(--ink-3)}
+/* ---------- Phones ---------- */
+@media (max-width:640px){
+  h2{font-size:28px}
+  .hero{padding:26px 16px 18px;gap:18px}
+  canvas#ball{width:150px;height:150px}
+  .brand .eyebrow{font-size:10.5px;letter-spacing:.1em}
+  .brand .tag{font-size:16px}
+  .ctas{align-items:center}
+  .steps{width:100%}
+  .step{padding:11px 14px}
+  .stamp{font-family:"Jost",system-ui,sans-serif;font-size:13px;line-height:1.45}
+  .stamp b{font-family:"DM Mono",monospace;font-size:12px}
+  .lockcard{width:100%;min-width:0}
+  .facts{grid-template-columns:1fr 1fr;gap:4px 12px;padding:12px 16px}
+  .wrap{padding:0 16px}
+  .facts div{border-left:0;padding-left:0}
+  .facts .n{font-size:26px}
+  section{margin:40px 0}
+  /* standings: one card per player instead of a wide table */
+  table{min-width:0}
+  thead{display:none}
+  table,tbody,tr,td{display:block}
+  tr{padding:12px 14px;border-bottom:1px solid var(--line)}
+  tr:last-child{border-bottom:0}
+  td{padding:0;border:0}
+  td.name{display:inline-block;font-size:17px;margin-right:10px;white-space:normal}
+  td.st{display:inline-block;vertical-align:middle}
+  td.surv{font-size:13px;color:var(--ink-2);margin-top:6px}
+  td.surv::before{content:"Weeks survived: ";font-family:"Jost",sans-serif;color:var(--ink-3)}
+  td.picks{margin-top:8px}
+  td.why:empty{display:none}
+  td.why{font-size:13px;margin-top:6px}
+  td.why::before{content:"Out because: ";font-family:"Jost",sans-serif}
+  .cast{grid-template-columns:1fr 1fr}
+  .cp{padding:10px 12px;min-height:0}
+  .cp .celeb{font-size:17px}
+  .cp .kf{display:none}
+  .season{grid-template-columns:1fr 1fr}
+}
+@media (max-width:380px){ .cast{grid-template-columns:1fr} }
+</style>
+
+<div class="hero-wrap">
+  <div class="spot"></div>
+  <canvas id="glints" aria-hidden="true"></canvas>
+  <div class="wrap hero">
+    <canvas id="ball" width="480" height="480" aria-hidden="true"></canvas>
+    <div class="brand">
+      <div class="eyebrow">Dancing with the Stars · <span id="season"></span> · survivor pool</div>
+      <h1>Mirrorball <em>Survivor</em></h1>
+      <p class="tag">Pick one couple a week that will not go home. Use each couple once. Last player standing takes the mirrorball.</p>
+      <div class="ctas">
+        <div class="steps">
+          <a id="regBtn" class="step" href="#"><span class="n">1</span><span class="t"><b>Get on the dance floor 🪩</b><small>Sign up once: a name, your email, a 4-digit PIN.</small></span></a>
+          <a id="pickBtn" class="step step-pick" href="#"><span class="n">2</span><span class="t"><b id="pickLabel">Make this week's pick →</b><small id="pickSub">Every week, before Tuesday 6:00 pm MT.</small></span></a>
+        </div>
+        <a id="whoBtn" class="cta2" href="#" target="_blank" rel="noopener">Who's picked (live)</a>
+      </div>
+      <div class="stamp">Board updated <b id="built"></b> · refreshes at 10 am, 2 pm, 5 pm and 9 pm MT</div>
+      <div class="stamp">Just joined or picked? The thank-you screen and your email receipt mean it saved. It shows here at the next refresh, or right now on <a id="whoLink" href="#" target="_blank" rel="noopener">Who's picked</a>.</div>
+    </div>
+    <div class="lockcard" id="lockcard">
+      <div class="eyebrow" id="lockEyebrow">Next lock</div>
+      <div class="big" id="lockBig">—</div>
+      <div class="sub" id="lockSub"></div>
+      <div class="cd" id="countdown"></div>
+    </div>
+  </div>
+  <div class="floor"><div class="wrap facts">
+    <div><div class="eyebrow">Still standing</div><div class="n" id="fAlive">0</div></div>
+    <div><div class="eyebrow">Out</div><div class="n" id="fOut">0</div></div>
+    <div><div class="eyebrow">Couples dancing</div><div class="n" id="fDance">16</div></div>
+    <div><div class="eyebrow">This week</div><div class="n" id="fWeek">—</div></div>
+    <div><div class="eyebrow">Elimination</div><div class="n" id="fElim">—</div></div>
+  </div></div>
+</div>
+
+<div class="wrap">
+  <section id="standings">
+    <div class="sec-head"><h2>Standings</h2><p id="standingsNote">Picks stay hidden until the week locks. After that, every pick is on the board. New players and picks appear at the next refresh (10 am, 2 pm, 5 pm, 9 pm MT), and the morning after each show once results are in.</p></div>
+    <div class="board"><div class="tbl" id="board"></div></div>
+  </section>
+
+  <section id="castSec">
+    <div class="sec-head"><h2>The cast</h2><p>Sixteen couples. Once you use one, they're gone from your list for the season.</p></div>
+    <div class="cast" id="cast"></div>
+  </section>
+
+  <section id="seasonSec">
+    <div class="sec-head"><h2>The season</h2><p>Shows air Tuesdays at 8 pm ET on ABC and Disney+. Picks lock when the show starts.</p></div>
+    <div class="season" id="season-grid"></div>
+  </section>
+
+  <section id="rulesSec">
+    <div class="sec-head"><h2>House rules</h2><p>Short version. The commissioner's ruling is final, and she is very fair.</p></div>
+    <div class="rules" id="rules"></div>
+  </section>
+
+  <footer>Mirrorball Survivor · built <span class="mono" id="builtFoot"></span> · scoring runs after each show</footer>
+</div>
+
+<script>
+const S = {"built_at":"2026-09-09T23:24:22.689740-06:00","pool":"Mirrorball Survivor","season":"Season 35","forms":{"register":"https://airtable.com/app3cOa7Jk1k6myZt/shrDcvWtegXhWoyct","pick":"https://airtable.com/app3cOa7Jk1k6myZt/shrUFWzZly0QXnRKH","whos_picked":"https://airtable.com/app3cOa7Jk1k6myZt/shrF1uN85nYWUx9UK"},"rules":{"first_pick_week":2,"lock_local_time":"6:00 pm MT (8:00 pm ET, when the show starts)","no_elimination_refund":true,"withdrawal_counts_as_survived":true},"current_week":{"number":2,"label":"Week 2","air_date":"2026-09-22","lock_time":"2026-09-23T00:00:00+00:00","lock_local":"Tuesday Sep 22, 6:00 PM MDT","status":"Open","elimination_type":"TBA","theme":null,"locked":false},"weeks":[{"number":1,"label":"Week 1","air_date":"2026-09-15","lock_time":"2026-09-16T00:00:00.000Z","status":"Upcoming","elimination_type":"None","pick_required":false,"theme":"Two-night premiere (Tue 9/15 + Wed 9/16)","notes":"No pick needed. Season 34 had no premiere elimination; if ABC announces one for S35, flip Pick Required on and set Status=Open."},{"number":2,"label":"Week 2","air_date":"2026-09-22","lock_time":"2026-09-23T00:00:00.000Z","status":"Open","elimination_type":"TBA","pick_required":true,"theme":null,"notes":"First pick of the pool. S34 week 2 was a double elimination."},{"number":3,"label":"Week 3","air_date":"2026-09-29","lock_time":"2026-09-30T00:00:00.000Z","status":"Upcoming","elimination_type":"TBA","pick_required":true,"theme":null,"notes":null},{"number":4,"label":"Week 4","air_date":"2026-10-06","lock_time":"2026-10-07T00:00:00.000Z","status":"Upcoming","elimination_type":"TBA","pick_required":true,"theme":null,"notes":null},{"number":5,"label":"Week 5","air_date":"2026-10-13","lock_time":"2026-10-14T00:00:00.000Z","status":"Upcoming","elimination_type":"TBA","pick_required":true,"theme":null,"notes":null},{"number":6,"label":"Week 6","air_date":"2026-10-20","lock_time":"2026-10-21T00:00:00.000Z","status":"Upcoming","elimination_type":"TBA","pick_required":true,"theme":null,"notes":null},{"number":7,"label":"Week 7","air_date":"2026-10-27","lock_time":"2026-10-28T00:00:00.000Z","status":"Upcoming","elimination_type":"TBA","pick_required":true,"theme":null,"notes":null},{"number":8,"label":"Week 8","air_date":"2026-11-03","lock_time":"2026-11-04T01:00:00.000Z","status":"Upcoming","elimination_type":"TBA","pick_required":true,"theme":null,"notes":null},{"number":9,"label":"Week 9","air_date":"2026-11-10","lock_time":"2026-11-11T01:00:00.000Z","status":"Upcoming","elimination_type":"TBA","pick_required":true,"theme":null,"notes":null},{"number":10,"label":"Week 10","air_date":"2026-11-17","lock_time":"2026-11-18T01:00:00.000Z","status":"Upcoming","elimination_type":"TBA","pick_required":true,"theme":null,"notes":null},{"number":11,"label":"Week 11","air_date":"2026-11-24","lock_time":"2026-11-25T01:00:00.000Z","status":"Upcoming","elimination_type":"TBA","pick_required":true,"theme":null,"notes":"Likely finale if the season runs 11 weeks like S34. Confirm once ABC publishes the schedule."},{"number":12,"label":"Week 12","air_date":"2026-12-01","lock_time":"2026-12-02T01:00:00.000Z","status":"Upcoming","elimination_type":"TBA","pick_required":false,"theme":null,"notes":"Placeholder. Delete if the season ends 11/24."}],"couples":[{"id":"recEGJAkTyuq5NYb1","celebrity":"Tatyana Ali","pro":"Jan Ravnik","known_for":"Actress & singer (Fresh Prince)","status":"Dancing","eliminated_week":null,"order":1},{"id":"recczU5NeCCp1o7BZ","celebrity":"Tyler Cameron","pro":"Sharna Burgess","known_for":"The Bachelorette runner-up","status":"Dancing","eliminated_week":null,"order":2},{"id":"rec5OEbdzzZMLwut5","celebrity":"Giada De Laurentiis","pro":"Alan Bersten","known_for":"Celebrity chef","status":"Dancing","eliminated_week":null,"order":3},{"id":"rec8gPu1Yn0zbGhbd","celebrity":"Jenna Dewan","pro":"Val Chmerkovskiy","known_for":"Actress & dancer (Step Up)","status":"Dancing","eliminated_week":null,"order":4},{"id":"recR15pPiad2QUM1L","celebrity":"Ezra Frech","pro":"Daniella Karagach","known_for":"Paralympic track & field champion","status":"Dancing","eliminated_week":null,"order":5},{"id":"recaEw30Ag5kJTt9z","celebrity":"Amber Glenn","pro":"Pasha Pashkov","known_for":"Olympic figure skater","status":"Dancing","eliminated_week":null,"order":6},{"id":"rec1jSMnB83G4VPSv","celebrity":"Taylor Hanson","pro":"Britt Stewart","known_for":"Hanson frontman","status":"Dancing","eliminated_week":null,"order":7},{"id":"recbmaoVGIRED7uQE","celebrity":"Maura Higgins","pro":"Mark Ballas","known_for":"TV personality & model (Love Island UK)","status":"Dancing","eliminated_week":null,"order":8},{"id":"rectWsDf5gRJM5mQL","celebrity":"Conner Leavitt","pro":"Adele Zaikman","known_for":"Secret Lives of Mormon Wives","status":"Dancing","eliminated_week":null,"order":9},{"id":"recpdIY9DFjTbBSPS","celebrity":"Ciara Miller","pro":"Brandon Armstrong","known_for":"Summer House","status":"Dancing","eliminated_week":null,"order":10},{"id":"recPhhFBoChnAeLiI","celebrity":"Sarah Jane Nader","pro":"Hailey Bills","known_for":"Love Thy Nader","status":"Dancing","eliminated_week":null,"order":11},{"id":"recavxyAA0kR5aaaF","celebrity":"Jackson Olson","pro":"Emma Slater","known_for":"Savannah Bananas second baseman","status":"Dancing","eliminated_week":null,"order":12},{"id":"recadlQKnwdOdsaub","celebrity":"Guillermo Rodriguez","pro":"Witney Carson","known_for":"Jimmy Kimmel Live! sidekick","status":"Dancing","eliminated_week":null,"order":13},{"id":"rec1EkSCFvztwHpkF","celebrity":"Harry Shum Jr.","pro":"Jenna Johnson","known_for":"Actor & dancer (Glee)","status":"Dancing","eliminated_week":null,"order":14},{"id":"recI6nWEsWiT6LL1D","celebrity":"Julia Stiles","pro":"Ezra Sosa","known_for":"Actress & director (Save the Last Dance)","status":"Dancing","eliminated_week":null,"order":15},{"id":"recSEOgjkrfzbv6NO","celebrity":"Connor Wood","pro":"Rylee Arnold","known_for":"Stand-up comedian & podcaster","status":"Dancing","eliminated_week":null,"order":16}],"players":[{"id":"recPb7mRCx3krityB","name":"MoMoney","alive":true,"out_week":null,"out_reason":null,"weeks":[{"week":2,"pick_id":"rec5C0g4xi3bB4uZP","couple":"recR15pPiad2QUM1L","result":"In","note":null,"revealed":false}],"burned":[],"survived":0}],"predictions":[],"counts":{"alive":1,"out":0,"dancing":16},"review":[]};
+const BUILT = "2026-09-09T23:24:22-06:00";
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const cmap = Object.fromEntries(S.couples.map(c => [c.id, c]));
+const fmtDate = iso => { if(!iso) return ""; const d = new Date(iso + (iso.length===10 ? "T12:00:00" : "")); return d.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"}); };
+const fmtBuilt = iso => new Date(iso).toLocaleString(undefined,{weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
+
+/* header */
+$("season").textContent = S.season;
+$("built").textContent = fmtBuilt(BUILT);
+$("builtFoot").textContent = fmtBuilt(BUILT);
+const pick = $("pickBtn"), reg = $("regBtn");
+if (S.forms.pick) pick.href = S.forms.pick; else { pick.classList.add("off"); $("pickLabel").textContent = "Pick form opens soon"; }
+if (S.forms.register) reg.href = S.forms.register; else reg.hidden = true;
+const who = $("whoBtn"); if (S.forms.whos_picked) who.href = S.forms.whos_picked; else who.hidden = true;
+const whoL = $("whoLink"); if (S.forms.whos_picked) whoL.href = S.forms.whos_picked; else whoL.replaceWith("the live list");
+
+const cw = S.current_week;
+$("fAlive").textContent = S.counts.alive;
+$("fOut").textContent = S.counts.out;
+$("fDance").textContent = S.counts.dancing;
+$("fWeek").textContent = cw.label || "—";
+$("fElim").textContent = cw.elimination_type && cw.elimination_type !== "TBA" ? cw.elimination_type : "TBA";
+
+if (cw.number) {
+  const lock = new Date(cw.lock_time);
+  if (cw.locked) {
+    $("lockcard").classList.add("locked");
+    $("lockEyebrow").textContent = cw.status === "Scored" ? "Scored" : "Picks locked";
+    $("lockBig").textContent = cw.label;
+    $("lockSub").textContent = "Aired " + fmtDate(cw.air_date) + ". Results post after the show.";
+    pick.classList.add("off"); $("pickLabel").textContent = "Picks are locked"; $("pickSub").textContent = "Results post after the show. Next week opens Wednesday.";
+  } else {
+    $("lockEyebrow").textContent = cw.label + " locks";
+    $("lockBig").textContent = lock.toLocaleString(undefined,{weekday:"long",hour:"numeric",minute:"2-digit"});
+    $("lockSub").textContent = lock.toLocaleDateString(undefined,{month:"long",day:"numeric"}) + " · shown in your local time";
+    const tick = () => { const ms = lock - Date.now(); if (ms <= 0) { $("countdown").textContent = "Locked"; return; }
+      const d = Math.floor(ms/864e5), h = Math.floor(ms%864e5/36e5), m = Math.floor(ms%36e5/6e4);
+      $("countdown").textContent = (d ? d + "d " : "") + h + "h " + String(m).padStart(2,"0") + "m to lock"; };
+    tick(); setInterval(tick, 30000);
+  }
+} else { $("lockBig").textContent = "Season over"; }
+
+/* standings */
+const weeksReq = S.weeks.filter(w => w.pick_required && w.status !== "Upcoming");
+function chip(wk) {
+  const c = wk.couple ? cmap[wk.couple] : null;
+  let label;
+  if (!wk.revealed) label = wk.result === "In" ? "✓ pick in" : "no pick yet";
+  else if (wk.result === "Missing") label = "no pick";
+  else if (c) label = c.celebrity.split(" ")[0] + (wk.result === "Survived" ? "" : " · " + wk.result.toLowerCase());
+  else label = wk.result.toLowerCase();
+  const title = wk.note ? ' title="' + esc(wk.note) + '"' : "";
+  return `<span class="chip ${esc(wk.result)}"${title}><span class="w">W${wk.week}</span>${esc(label)}</span>`;
+}
+if (!S.players.length) {
+  $("board").innerHTML = `<div class="empty"><b>Nobody's on the floor yet.</b>Get on the dance floor, then make your first pick before ${esc(weeksReq[0]?.label || "Week 2")} locks.</div>`;
+} else {
+  const rows = S.players.map(p => `<tr class="${p.alive ? "" : "out"}">
+    <td class="name">${esc(p.name)}</td>
+    <td class="st">${p.alive ? '<span class="pill alive"><i></i>Alive</span>' : `<span class="pill out"><i></i>Out · W${p.out_week}</span>`}</td>
+    <td class="mono surv">${p.survived}</td>
+    <td class="picks"><div class="chips">${p.weeks.map(chip).join("")}</div></td>
+    <td class="mono why" style="color:var(--ink-3)">${p.alive && !p.out_reason ? "" : esc(p.out_reason || "")}</td></tr>`).join("");
+  $("board").innerHTML = `<table><thead><tr><th>Player</th><th>Status</th><th>Weeks survived</th><th>Picks</th><th>Out because</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+/* cast */
+$("cast").innerHTML = S.couples.map(c => { const gone = c.status !== "Dancing";
+  const pill = c.status === "Dancing" ? '<span class="pill dance">Dancing</span>' : c.status === "Withdrew" ? `<span class="pill wd">Withdrew${c.eliminated_week ? " · W" + c.eliminated_week : ""}</span>` : `<span class="pill gone">Out · W${c.eliminated_week ?? "?"}</span>`;
+  return `<div class="cp ${gone ? "gone" : ""}"><div class="st">${pill}</div><div class="celeb">${esc(c.celebrity)}</div><div class="pro">with ${esc(c.pro)}</div><div class="kf">${esc(c.known_for)}</div></div>`; }).join("");
+
+/* season */
+$("season-grid").innerHTML = S.weeks.map(w => { const cur = cw.number === w.number; const done = w.status === "Scored";
+  const e = w.pick_required ? (w.elimination_type === "TBA" ? "elimination TBA" : w.elimination_type + " elimination") : "no pick needed";
+  return `<div class="wk ${cur ? "cur" : ""} ${done ? "done" : ""}"><div class="eyebrow">${esc(w.label)}</div><div class="d">${fmtDate(w.air_date)}</div><div class="e">${esc(w.theme || e)}</div></div>`; }).join("");
+
+/* rules */
+const R = [
+  ["One pick a week", `Choose one couple you think survives that night's elimination. Picks start ${esc(weeksReq[0]?.label || "Week 2")}; the premiere is a free preview.`],
+  ["Lock at showtime", `Picks lock at ${esc(S.rules.lock_local_time)}. Your latest pick before lock is the one that counts. Late picks don't.`],
+  ["Use each couple once", "Once a couple survives for you, they're burned for the rest of the season. Picking them again puts you out."],
+  ["Miss a week, you're out", "No pick before lock counts as a loss. Set a reminder. Tuesday afternoon is the sweet spot."],
+  ["No elimination? Refund", "If nobody goes home, everyone survives and that week's couple goes back in your pocket, unburned."],
+  ["Withdrawals", "If your couple leaves the show for injury or any reason other than being voted off, you survive and they're burned."],
+  ["Double eliminations", "Same rule, twice the danger. Your couple just has to not be one of them."],
+  ["Wipeout week", "If every remaining player goes out in the same week, that week is voided and you all dance on."],
+  ["The finale", "Players still alive going into the finale pick the winner. Right answer wins; if nobody's right, highest finish wins; still tied, split it."],
+];
+$("rules").innerHTML = R.map(([h,p]) => `<div class="rule"><h3>${h}</h3><p>${p}</p></div>`).join("");
+
+/* mirrorball */
+(function(){
+  const cv = $("ball"), ctx = cv.getContext("2d"), W = cv.width, R = W*0.44, cx = W/2, cy = W/2;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const rows = 30, tiles = [];
+  for (let i = 0; i < rows; i++) { const lat = (i + .5) / rows * Math.PI - Math.PI/2; const n = Math.max(6, Math.round(Math.cos(lat) * 60));
+    for (let j = 0; j < n; j++) tiles.push({lat, lon: j / n * Math.PI * 2, s: 0.6 + Math.random() * 0.4}); }
+  let t = 0;
+  function draw(){
+    ctx.clearRect(0,0,W,W);
+    const g = ctx.createRadialGradient(cx - R*.35, cy - R*.4, R*.1, cx, cy, R);
+    g.addColorStop(0, "#5a4a63"); g.addColorStop(1, "#1c1024");
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.fill();
+    for (const q of tiles) {
+      const lon = q.lon + t, x = Math.cos(q.lat) * Math.sin(lon), z = Math.cos(q.lat) * Math.cos(lon), y = Math.sin(q.lat);
+      if (z < 0) continue;
+      const px = cx + x * R, py = cy - y * R, sz = (R / rows) * 1.35 * Math.max(.35, z), lit = Math.max(0, (-x*0.5 - y*0.6 + z*0.6));
+      const glint = lit > 0.78 && q.s > 0.9;
+      const l = 28 + lit * 55 + (glint ? 20 : 0);
+      ctx.fillStyle = glint ? "#FFF2C4" : `hsl(${lit > .6 ? 44 : 285} ${lit > .6 ? 70 : 14}% ${l}%)`;
+      ctx.fillRect(px - sz/2, py - sz/2, sz*0.9, sz*0.9);
+    }
+    ctx.strokeStyle = "rgba(255,225,150,.25)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, cy - R + 2); ctx.stroke();
+    t += reduce ? 0 : 0.006;
+    if (!reduce) requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* light glints thrown across the hero, like a real ball does */
+(function(){
+  const cv = $("glints"), ctx = cv.getContext("2d");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function size(){ cv.width = cv.clientWidth; cv.height = cv.clientHeight; }
+  size(); addEventListener("resize", size);
+  const N = 70, dots = Array.from({length:N}, (_, i) => ({a: i / N * Math.PI * 2, r: .2 + Math.random()*.8, s: 2 + Math.random()*5, hue: Math.random() < .7 ? 46 : 330, o: .25 + Math.random()*.45}));
+  let t = 0;
+  function draw(){
+    const W = cv.width, H = cv.height; ctx.clearRect(0,0,W,H);
+    for (const d of dots) {
+      const ang = d.a + t * (0.25 + d.r*0.2);
+      const x = W*0.5 + Math.cos(ang) * W*0.55 * d.r, y = H*0.5 + Math.sin(ang*1.3) * H*0.55 * d.r;
+      const pulse = 0.6 + 0.4*Math.sin(t*3 + d.a*7);
+      ctx.fillStyle = `hsla(${d.hue} 90% 80% / ${d.o*pulse})`;
+      ctx.beginPath(); ctx.ellipse(x, y, d.s, d.s*0.6, ang, 0, Math.PI*2); ctx.fill();
+    }
+    t += reduce ? 0 : 0.004;
+    if (!reduce) requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+
+</body>
+</html>
